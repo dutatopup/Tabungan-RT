@@ -12,6 +12,6 @@
 </footer>
 
 <!-- Bootstrap JS Bundle with Popper -->
-<script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kF7SkO5Y1DLyVZG5e81S7nrx7jPsk7QKJei4eR8KzJ0VcLVRGjAE+Hgk4W8W+wrA" crossorigin="anonymous"></script>
 </body>
 </html>
