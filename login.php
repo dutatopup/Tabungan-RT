@@ -5,7 +5,7 @@ include 'core/headers.php';
 
 // Redirect pengguna yang sudah login ke dashboard
 if (isset($_SESSION['username'])) {
-    header("Location: dashboard.php");
+    echo '<script>window.location.href = "dashboard.php";</script>';
     exit();
 }
 
