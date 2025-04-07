@@ -1,0 +1,20 @@
+{
+  "name": "Rekap RT06",
+  "short_name": "Rekap RT06",
+  "start_url": "/login.php",
+  "display": "fullscreen",
+  "background_color": "#4c4c4c",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/assets/img/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/img/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

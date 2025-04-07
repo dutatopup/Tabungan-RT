@@ -1,0 +1,105 @@
+/* Import Google Fonts: Roboto */
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap");
+@import url("bootstrap/css/bootstrap.min.css");
+
+/* Terapkan font Roboto ke semua elemen umum */
+body,
+.btn,
+.form-control,
+.nav,
+.card,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+span,
+div {
+  font-family: "Source Sans Pro", sans-serif !important;
+}
+
+/* Jangan ubah font pada icon Font Awesome */
+.fa,
+.fas,
+.far,
+.fal,
+.fab {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900; /* tergantung jenis FA yang digunakan */
+}
+
+.bg-abu-abu {
+  --bs-bg-opacity: 1;
+  background-color: #2c3e50 !important;
+}
+
+/* Dark theme dropdown customization */
+.dropdown-menu.bg-dark {
+    background-color: #343a40;
+    border: 1px solid rgba(255,255,255,.1);
+}
+
+.dropdown-menu.bg-dark .dropdown-item {
+    color: rgba(255,255,255,.75);
+    padding: 0.5rem 1rem;
+}
+
+.dropdown-menu.bg-dark .dropdown-item:hover {
+    background-color: rgba(255,255,255,.1);
+    color: #fff;
+}
+
+/* Desktop navbar styling */
+@media (min-width: 992px) {
+    .navbar-expand-lg .navbar-nav .nav-link {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+    
+    .navbar-expand-lg .navbar-nav .dropdown-menu {
+        position: absolute;
+    }
+}
+
+/* Desktop navbar alignment */
+@media (min-width: 992px) {
+    .navbar-expand-lg .navbar-nav {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .nav-item {
+        white-space: nowrap;
+    }
+}
+
+
+
+/* Mobile offcanvas styling */
+.offcanvas-end {
+    width: 280px;
+}
+
+/* Logo and brand alignment */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+}
+
+/* Dropdown menu styling */
+.dropdown-menu {
+    border: 1px solid rgba(0,0,0,.1);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.1);
+}
+
+/* Mobile menu logo */
+@media (max-width: 991.98px) {
+    .offcanvas-header {
+        border-bottom: 1px solid rgba(255,255,255,.1);
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+}
