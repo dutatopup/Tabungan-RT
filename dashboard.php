@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'core/koneksi.php';
-include 'core/headers.php';
+
 
 // Cek login
 if (!isset($_SESSION['username'])) {
@@ -74,6 +74,7 @@ $total_pages = ceil($total_records / $records_per_page);
 // Ambil data dengan pagination
 $query = "SELECT * FROM kas_rt ORDER BY id ASC LIMIT $offset, $records_per_page";
 $result = $conn->query($query);
+include 'core/headers.php';
 ?>
 
 <div class="container mt-4">
