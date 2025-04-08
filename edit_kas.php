@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'core/koneksi.php';
-include 'core/headers.php';
+
 
 // Check if user is logged in and is admin
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
 // Ambil data yang akan diedit
 $id = $_GET['id'] ?? 0;
 $data = $conn->query("SELECT * FROM kas_rt WHERE id = $id")->fetch_assoc();
+include 'core/headers.php';
 ?>
 
 <div class="container mt-4">
