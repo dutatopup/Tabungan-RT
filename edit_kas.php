@@ -8,7 +8,6 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
     header("Location: unauthorized.php");
     exit;
 }
-
 // Proses update data
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     $id = $_POST['id'];
@@ -16,13 +15,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     $masuk = $_POST['masuk'] ?: 0;
     $keluar = $_POST['keluar'] ?: 0;
     $keterangan = $_POST['keterangan'];
-    
-    $stmt = $conn->prepare("UPDATE kas_rt SET tanggal=?, masuk=?, keluar=?, keterangan=? WHERE id=?");
-    $stmt->bind_param("sddsi", $tanggal, $masuk, $keluar, $keterangan, $id);
-    $stmt->execute();
-    
-    header("Location: dashboard.php");
-    exit;
+
+    $conn->begin_transaction();
+    try {
+        // 1. Ambil data LAMA
+        $old_data = $conn->query("SELECT masuk, keluar FROM kas_rt WHERE id = $id")->fetch_assoc();
+        $old_masuk = $old_data['masuk'];
+        $old_keluar = $old_data['keluar'];
+
+        // 2. Update transaksi saat ini
+        $stmt = $conn->prepare("UPDATE kas_rt SET tanggal=?, masuk=?, keluar=?, keterangan=? WHERE id=?");
+        $stmt->bind_param("sddsi", $tanggal, $masuk, $keluar, $keterangan, $id);
+        $stmt->execute();
+
+        // 3. Hitung selisih dan update SALDO BERANTAI
+        $selisih = ($masuk - $old_masuk) - ($keluar - $old_keluar);
+        if ($selisih != 0) {
+            // 🔥 Update saldo di record yang diubah
+            $conn->query("UPDATE kas_rt SET saldo_akhir = saldo_akhir + $selisih WHERE id = $id");
+            
+            // 🔥 Update saldo di semua record SETELAH ini
+            $conn->query("UPDATE kas_rt SET saldo_akhir = saldo_akhir + $selisih WHERE id > $id");
+        }
+
+        $conn->commit();
+        header("Location: dashboard.php");
+        exit;
+    } catch (Exception $e) {
+        $conn->rollback();
+        die("Error: " . $e->getMessage());
+    }
 }
 
 // Ambil data yang akan diedit
@@ -39,13 +61,13 @@ include 'core/headers.php';
         <div class="card-body">
             <form method="POST" class="needs-validation" novalidate>
                 <input type="hidden" name="id" value="<?= $data['id'] ?>">
-                
+
                 <div class="mb-3">
                     <label for="tanggal" class="form-label"><i class="fas fa-calendar-alt me-1"></i> Tanggal:</label>
                     <input type="date" class="form-control" id="tanggal" name="tanggal" value="<?= $data['tanggal'] ?>" required>
                     <div class="invalid-feedback">Silakan isi tanggal</div>
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="masuk" class="form-label"><i class="fas fa-arrow-down me-1 text-success"></i> Pemasukan (Rp):</label>
                     <div class="input-group">
@@ -53,7 +75,7 @@ include 'core/headers.php';
                         <input type="number" class="form-control" id="masuk" name="masuk" value="<?= $data['masuk'] ?>" min="0">
                     </div>
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="keluar" class="form-label"><i class="fas fa-arrow-up me-1 text-danger"></i> Pengeluaran (Rp):</label>
                     <div class="input-group">
@@ -61,13 +83,13 @@ include 'core/headers.php';
                         <input type="number" class="form-control" id="keluar" name="keluar" value="<?= $data['keluar'] ?>" min="0">
                     </div>
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="keterangan" class="form-label"><i class="fas fa-info-circle me-1"></i> Keterangan:</label>
                     <input type="text" class="form-control" id="keterangan" name="keterangan" value="<?= htmlspecialchars($data['keterangan']) ?>" required>
                     <div class="invalid-feedback">Silakan isi keterangan</div>
                 </div>
-                
+
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <a href="dashboard.php" class="btn btn-secondary me-md-2"><i class="fas fa-arrow-left me-1"></i> Kembali</a>
                     <button type="submit" name="update" class="btn btn-primary"><i class="fas fa-save me-1"></i> Update Data</button>
@@ -78,21 +100,21 @@ include 'core/headers.php';
 </div>
 
 <script>
-// Bootstrap form validation
-(function () {
-    'use strict'
-    var forms = document.querySelectorAll('.needs-validation')
-    Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-                form.classList.add('was-validated')
-            }, false)
-        })
-})()
+    // Bootstrap form validation
+    (function() {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
 </script>
 
 <?php include 'core/footer.php'; ?>
