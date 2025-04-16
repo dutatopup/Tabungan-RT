@@ -66,7 +66,14 @@ $tahun = isset($_GET['tahun']) ? $_GET['tahun'] : 25;
             $total_hari = date('L', strtotime("20$tahun-01-01")) ? 366 : 365;
 
             // Ambil daftar semua tabel untuk tahun ini
-            $tables_query = "SHOW TABLES LIKE 'tab_%$tahun'";
+            if ($tahun == 25) {
+                // Jika tahun 2025, hanya ambil tabel 2025
+                $tables_query = "SHOW TABLES LIKE 'tab_%25'";
+            } else {
+                // Jika tahun 2026, ambil tabel 2025 dan 2026
+                $tables_query = "SHOW TABLES WHERE Tables_in_" . $db . " LIKE 'tab_%25' OR Tables_in_" . $db . " LIKE 'tab_%26'";
+            }
+
             $tables_result = $conn->query($tables_query);
             $tables = array();
             if ($tables_result) {
